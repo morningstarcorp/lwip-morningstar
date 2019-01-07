@@ -85,7 +85,15 @@ typedef enum {
 /** Connection closed.       */
   ERR_CLSD       = -15,
 /** Illegal argument.        */
-  ERR_ARG        = -16
+  ERR_ARG        = -16,
+
+/*** Morningstar Custom Errors ***/
+/** File for wrong product    */
+  ERR_ID		 = -17,
+/** File not from morningstar */
+  ERR_HEADER	 = -18,
+/** File not an msc           */
+  ERR_MSC		 = -19
 } err_enum_t;
 
 /** Define LWIP_ERR_T in cc.h if you want to use
