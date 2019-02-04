@@ -1,3 +1,4 @@
+*.sw[pon]
 *.o
 *.a
 /doc/doxygen/output/html
