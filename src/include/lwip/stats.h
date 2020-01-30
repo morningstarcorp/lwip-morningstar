@@ -60,6 +60,25 @@ extern "C" {
 #define STAT_COUNTER_F   U16_F
 #endif
 
+typedef struct
+{
+  uint32_t http_pbuf;
+  uint32_t cgi_pbuf;
+  uint32_t ref_pbuf;
+  uint32_t req_pbuf;
+  uint32_t req_pbuf2;
+  uint32_t post_pbuf;
+  uint32_t req_pbuf3;
+  uint32_t req_pbuf4;
+  uint32_t req_pbuf5;
+  uint32_t req_pbuf6;
+  uint32_t req_pbuf7;
+  uint32_t req_pbuf8;
+  
+} PbufStats;
+
+extern PbufStats pbufStats;
+
 /** Protocol related stats */
 struct stats_proto {
   STAT_COUNTER xmit;             /* Transmitted packets. */

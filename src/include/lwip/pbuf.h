@@ -219,9 +219,8 @@ struct pbuf {
 
   /** For incoming packets, this contains the input netif's index */
   u8_t if_idx;
-
-  /** In case the user needs to store data custom data on a pbuf */
-  LWIP_PBUF_CUSTOM_DATA
+  /** a debug flag for tracking down the memory leak*/
+  u16_t debug_flag; 
 };
 
 

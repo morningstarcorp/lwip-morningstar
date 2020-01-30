@@ -77,6 +77,7 @@
 #include "lwip/memp.h"
 #include "lwip/sys.h"
 #include "lwip/netif.h"
+#include "generictypedefs.h"
 #if LWIP_TCP && TCP_QUEUE_OOSEQ
 #include "lwip/priv/tcp_priv.h"
 #endif
@@ -186,6 +187,7 @@ pbuf_init_alloced_pbuf(struct pbuf *p, void *payload, u16_t tot_len, u16_t len, 
   p->flags = flags;
   p->ref = 1;
   p->if_idx = NETIF_NO_INDEX;
+  p->debug_flag = 0;
 }
 
 /**
@@ -771,6 +773,42 @@ pbuf_free(struct pbuf *p)
       {
         /* is this a pbuf from the pool? */
         if (alloc_src == PBUF_TYPE_ALLOC_SRC_MASK_STD_MEMP_PBUF_POOL) {
+          if(p->debug_flag & BIT0){
+            pbufStats.http_pbuf--;
+          }
+          if(p->debug_flag & BIT1){
+            pbufStats.cgi_pbuf--;
+          }
+          if(p->debug_flag & BIT2){
+            pbufStats.ref_pbuf--;
+          }
+          if(p->debug_flag & BIT3){
+            pbufStats.req_pbuf--;
+          }
+          if(p->debug_flag & BIT4){
+            pbufStats.req_pbuf2--;
+          }
+          if(p->debug_flag & BIT5){
+            pbufStats.post_pbuf--;
+          }
+          if(p->debug_flag & BIT6){
+            pbufStats.req_pbuf3--;
+          }
+          if(p->debug_flag & BIT7){
+            pbufStats.req_pbuf4--;
+          }
+          if(p->debug_flag & BIT8){
+            pbufStats.req_pbuf5--;
+          }
+          if(p->debug_flag & BIT9){
+            pbufStats.req_pbuf6--;
+          }
+          if(p->debug_flag & BIT10){
+            pbufStats.req_pbuf7--;
+          }
+          if(p->debug_flag & BIT11){
+            pbufStats.req_pbuf8--;
+          }
           memp_free(MEMP_PBUF_POOL, p);
           /* is this a ROM or RAM referencing pbuf? */
         } else if (alloc_src == PBUF_TYPE_ALLOC_SRC_MASK_STD_MEMP_PBUF) {
@@ -830,6 +868,9 @@ pbuf_ref(struct pbuf *p)
 {
   /* pbuf given? */
   if (p != NULL) {
+    if(p->debug_flag & BIT0){ //a ref from http
+    p->debug_flag |= BIT2; 
+    pbufStats.ref_pbuf++;}
     SYS_ARCH_SET(p->ref, (LWIP_PBUF_REF_T)(p->ref + 1));
     LWIP_ASSERT("pbuf ref overflow", p->ref > 0);
   }
