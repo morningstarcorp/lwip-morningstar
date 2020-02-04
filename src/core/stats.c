@@ -48,6 +48,7 @@
 #include <string.h>
 
 struct stats_ lwip_stats;
+PbufStats pbufStats;
 
 void
 stats_init(void)
@@ -166,4 +167,3 @@ stats_display(void)
 #endif /* LWIP_STATS_DISPLAY */
 
 #endif /* LWIP_STATS */
-
