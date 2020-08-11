@@ -871,14 +871,14 @@ get_http_headers(struct http_state *hs, const char *uri)
     return;
   }
   /* We are dealing with a particular filename. Look for one other
-      special case.  We assume that any filename with "404" in it must be
-      indicative of a 404 server error whereas all other files require
-      the 200 OK header. */
-  if (strstr(uri, "404")) {
+     special case.  We assume that any filename with "404" in it must be
+     indicative of a 404 server error whereas all other files require
+     the 200 OK header. */
+  if (strstr(uri, "404.") == uri) {
     hs->hdrs[HDR_STRINGS_IDX_HTTP_STATUS] = g_psHTTPHeaderStrings[HTTP_HDR_NOT_FOUND];
-  } else if (strstr(uri, "400")) {
+  } else if (strstr(uri, "400.") == uri) {
     hs->hdrs[HDR_STRINGS_IDX_HTTP_STATUS] = g_psHTTPHeaderStrings[HTTP_HDR_BAD_REQUEST];
-  } else if (strstr(uri, "501")) {
+  } else if (strstr(uri, "501.") == uri) {
     hs->hdrs[HDR_STRINGS_IDX_HTTP_STATUS] = g_psHTTPHeaderStrings[HTTP_HDR_NOT_IMPL];
   } else {
     hs->hdrs[HDR_STRINGS_IDX_HTTP_STATUS] = g_psHTTPHeaderStrings[HTTP_HDR_OK];
@@ -1300,6 +1300,22 @@ http_send_data_ssi(struct altcp_pcb *pcb, struct http_state *hs)
              * back to idle state. */
             ssi->tag_state = TAG_NONE;
           }
+
+#if LWIP_HTTPD_DYNAMIC_FILE_READ && !LWIP_HTTPD_SSI_INCLUDE_TAG
+          if ((ssi->tag_state == TAG_NONE) &&
+              (ssi->parsed - hs->file < ssi->tag_index)) {
+            for(u16_t i = 0;i < ssi->tag_index;i++) {
+              ssi->tag_insert[i] = http_ssi_tag_desc[ssi->tag_type].lead_in[i];
+            }
+            ssi->tag_insert_len = ssi->tag_index;
+            hs->file += ssi->parsed - hs->file;
+            hs->left -= ssi->parsed - hs->file;
+            ssi->tag_end = hs->file;
+            ssi->tag_index = 0;
+            ssi->tag_state = TAG_SENDING;
+            break;
+          }
+#endif
 
           /* Move on to the next character in the buffer */
           ssi->parse_left--;
